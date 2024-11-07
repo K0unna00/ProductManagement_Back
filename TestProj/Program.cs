@@ -5,7 +5,6 @@ using TestProj.Core.Interfaces;
 using TestProj.Infrastructure.Data;
 using TestProj.Infrastructure.Repositories;
 
-
 var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 var builder = WebApplication.CreateBuilder(args);
@@ -48,8 +47,6 @@ try
         });
     });
 
-    
-
     builder.Host.UseSerilog();
 
     var app = builder.Build();
@@ -73,7 +70,6 @@ try
     app.MapControllers();
 
     app.Run();
-
 
 }
 catch (Exception ex)
