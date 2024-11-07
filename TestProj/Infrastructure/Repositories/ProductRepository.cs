@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using TestProj.Core.Entities;
+using TestProj.Core.Exceptions;
 using TestProj.Core.Interfaces;
 using TestProj.Infrastructure.Data;
 
@@ -35,7 +36,7 @@ public class ProductRepository : IProductRepository
 
     public async Task UpdateProductAsync(string id, Product product)
     {
-        await _context.Products.ReplaceOneAsync(p => p.Id == id, product);
+        await _context.Products.ReplaceOneAsync(p => p.Id == id , product);
     }
 
     public async Task DeleteProductAsync(string id)
