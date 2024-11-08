@@ -106,4 +106,14 @@ public class ProductController : ControllerBase
         _logger.LogInformation("Deletes a product by its ID.");
         return NoContent();
     }
+
+    [HttpPost("getByIds")]
+    public async Task<IActionResult> GetProductsByIds([FromBody] List<string> ids)
+    {
+        var products = await _repository.GetProductByIdsAsync(ids);
+
+        return Ok(products);
+    }
+
+
 }

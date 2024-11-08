@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using TestProj.Core.Entities;
 using TestProj.Core.Exceptions;
 using TestProj.Core.Interfaces;
@@ -50,5 +51,14 @@ public class ProductRepository : IProductRepository
             .Ascending(p => p.Name)
             .Descending(p => p.Price);
         await _context.Products.Indexes.CreateOneAsync(new CreateIndexModel<Product>(keys));
+    }
+
+    public async Task<List<Product>> GetProductByIdsAsync(List<string> ids)
+    {
+        var filter = Builders<Product>.Filter.In("Id", ids);
+
+        var products = await _context.Products.Find(filter).ToListAsync();
+
+        return products;
     }
 }
