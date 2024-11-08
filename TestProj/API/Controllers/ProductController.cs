@@ -107,11 +107,18 @@ public class ProductController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Gets a products by IDs.
+    /// </summary>
+    /// <param name="ids">The IDs of the product to be filtered</param>
+    /// <returns>A list of products</returns>
+    /// <response code="200">Returns the list of products</response>
     [HttpPost("getByIds")]
     public async Task<IActionResult> GetProductsByIds([FromBody] List<string> ids)
     {
         var products = await _repository.GetProductByIdsAsync(ids);
 
+        _logger.LogInformation(" Gets a products by IDs.");
         return Ok(products);
     }
 
