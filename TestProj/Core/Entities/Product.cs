@@ -20,4 +20,7 @@ public class Product
 
     [BsonElement("createdAt")]
     public DateTime CreatedAt { get; set; }
+
+    [BsonElement("imgName")]
+    public string ImgName { get; set; }
 }

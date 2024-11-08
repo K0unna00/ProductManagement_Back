@@ -15,4 +15,6 @@ public interface IProductRepository
     Task DeleteProductAsync(string id);
 
     Task<List<Product>> GetProductByIdsAsync(List<string> ids);
+
+    Task<string> SaveImgAsync(IFormFile img);
 }

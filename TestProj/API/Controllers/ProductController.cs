@@ -1,21 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using TestProj.API.DTOs;
 using TestProj.Core.Entities;
 using TestProj.Core.Exceptions;
 using TestProj.Core.Interfaces;
+using TestProj.Infrastructure.Repositories;
 
 [Route("api/[controller]")]
 [ApiController]
 public class ProductController : ControllerBase
 {
     private readonly IProductRepository _repository;
-
     private readonly ILogger<ProductController> _logger;
+    private readonly IMapper _mapper;
 
-    public ProductController(IProductRepository repository, ILogger<ProductController> logger)
+    public ProductController(IProductRepository repository, ILogger<ProductController> logger, IMapper mapper)
     {
         _repository = repository;
         _logger = logger;
+        _mapper = mapper;
     }
 
     /// <summary>
@@ -62,13 +66,15 @@ public class ProductController : ControllerBase
     /// <response code="201">The product was successfully created</response>
     [HttpPost]
     [ProducesResponseType(typeof(Product), 201)]
-    public async Task<IActionResult> Post([FromBody] Product product)
+    public async Task<IActionResult> Post([FromForm] ProductDto productDto)
     {
-        await _repository.AddProductAsync(product);
+        var entity = _mapper.Map<Product>(productDto);
+
+        entity.ImgName = await _repository.SaveImgAsync(productDto.Img);
+        await _repository.AddProductAsync(entity);
 
         _logger.LogInformation("Adds a new product to the system.");
-
-        return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
+        return CreatedAtAction(nameof(Get), new { id = entity.Id }, entity);
     }
 
     /// <summary>
@@ -87,7 +93,6 @@ public class ProductController : ControllerBase
         await _repository.UpdateProductAsync(id, product);
 
         _logger.LogInformation("Updates an existing product.");
-
         return NoContent();
     }
 

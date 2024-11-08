@@ -4,16 +4,19 @@ using TestProj.Core.Entities;
 using TestProj.Core.Exceptions;
 using TestProj.Core.Interfaces;
 using TestProj.Infrastructure.Data;
+using TestProj.Infrastructure.Utilities;
 
 namespace TestProj.Infrastructure.Repositories;
 
 public class ProductRepository : IProductRepository
 {
     private readonly MongoContext _context;
+    private readonly IFileUtility _fileUtility;
 
-    public ProductRepository(MongoContext context)
+    public ProductRepository(MongoContext context, IFileUtility fileUtility)
     {
         _context = context;
+        _fileUtility = fileUtility;
     }
 
     public async Task<List<Product>> GetAllProductsAsync()
@@ -60,5 +63,11 @@ public class ProductRepository : IProductRepository
         var products = await _context.Products.Find(filter).ToListAsync();
 
         return products;
+    }
+
+
+    public async Task<string> SaveImgAsync(IFormFile img)
+    {
+        return await _fileUtility.SaveImageAsync(img);
     }
 }
