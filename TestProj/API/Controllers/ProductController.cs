@@ -67,7 +67,6 @@ public class ProductController : ControllerBase
         await _repository.AddProductAsync(product);
 
         _logger.LogInformation("Adds a new product to the system.");
-
         return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
     }
 
@@ -87,7 +86,6 @@ public class ProductController : ControllerBase
         await _repository.UpdateProductAsync(id, product);
 
         _logger.LogInformation("Updates an existing product.");
-
         return NoContent();
     }
 
