@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TestProj.API.DTOs;
+using TestProj.Core.Common;
 using TestProj.Core.Entities;
 using TestProj.Core.Exceptions;
 using TestProj.Core.Interfaces;
+using TestProj.Core.Services;
 using TestProj.Infrastructure.Repositories;
-using TestProj.Infrastructure.Utilities;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -15,9 +16,9 @@ public class ProductController : ControllerBase
     private readonly IProductRepository _repository;
     private readonly ILogger<ProductController> _logger;
     private readonly IMapper _mapper;
-    private readonly IFileUtility _fileUtility;
+    private readonly IFileService _fileUtility;
 
-    public ProductController(IProductRepository repository, ILogger<ProductController> logger, IMapper mapper, IFileUtility fileUtility)
+    public ProductController(IProductRepository repository, ILogger<ProductController> logger, IMapper mapper, IFileService fileUtility)
     {
         _repository = repository;
         _logger = logger;
@@ -35,7 +36,10 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> Get()
     {
         _logger.LogInformation("Gets a list of all products.");
-        return Ok(await _repository.GetAllAsync());
+
+        var response = await _repository.GetAllAsync();
+
+        return Ok(new ApiResponse<IEnumerable<Product>>(response));
     }
 
     /// <summary>
@@ -58,7 +62,8 @@ public class ProductController : ControllerBase
         }
 
         _logger.LogInformation("Gets a product by its ID.");
-        return Ok(product);
+
+        return Ok(new ApiResponse<Product>(product));
     }
 
     /// <summary>
@@ -77,7 +82,10 @@ public class ProductController : ControllerBase
         await _repository.AddAsync(entity);
 
         _logger.LogInformation("Adds a new product to the system.");
-        return CreatedAtAction(nameof(Get), new { id = entity.Id }, entity);
+
+        var response = CreatedAtAction(nameof(Get), new { id = entity.Id }, entity);
+
+        return Ok(new ApiResponse<CreatedAtActionResult>(response));
     }
 
     /// <summary>

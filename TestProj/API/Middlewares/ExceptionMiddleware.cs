@@ -8,10 +8,12 @@ namespace TestProj.API.Middlewares;
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger _logger;
 
-    public ExceptionMiddleware(RequestDelegate next)
+    public ExceptionMiddleware(RequestDelegate next, ILogger logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
@@ -51,9 +53,11 @@ public class ExceptionMiddleware
 
         var response = new
         {
-            StatusCode = context.Response.StatusCode,
+            context.Response.StatusCode,
             Message = errorMessage
         };
+
+        _logger.LogInformation(errorMessage);
 
         var jsonResponse = JsonSerializer.Serialize(response);
         return context.Response.WriteAsync(jsonResponse);

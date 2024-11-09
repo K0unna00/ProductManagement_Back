@@ -3,17 +3,17 @@ using MongoDB.Driver;
 using TestProj.Core.Entities;
 using TestProj.Core.Exceptions;
 using TestProj.Core.Interfaces;
+using TestProj.Core.Services;
 using TestProj.Infrastructure.Data;
-using TestProj.Infrastructure.Utilities;
 
 namespace TestProj.Infrastructure.Repositories;
 
 public class ProductRepository : IProductRepository
 {
     private readonly MongoContext _context;
-    private readonly IFileUtility _fileUtility;
+    private readonly IFileService _fileUtility;
 
-    public ProductRepository(MongoContext context, IFileUtility fileUtility)
+    public ProductRepository(MongoContext context, IFileService fileUtility)
     {
         _context = context;
         _fileUtility = fileUtility;

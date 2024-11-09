@@ -1,6 +1,6 @@
-﻿namespace TestProj.Infrastructure.Utilities;
+﻿namespace TestProj.Core.Services;
 
-public interface IFileUtility
+public interface IFileService
 {
     Task<string> SaveImageAsync(IFormFile imageFile);
 

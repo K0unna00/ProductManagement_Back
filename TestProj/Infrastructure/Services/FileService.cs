@@ -1,11 +1,12 @@
-﻿
-namespace TestProj.Infrastructure.Utilities;
+﻿using TestProj.Core.Services;
 
-public class FileUtility : IFileUtility
+namespace TestProj.Infrastructure.Services;
+
+public class FileService : IFileService
 {
     private readonly string _imageFolder;
 
-    public FileUtility(IConfiguration configuration)
+    public FileService(IConfiguration configuration)
     {
         _imageFolder = configuration["FileSettings:FileFolderPath"];
 
