@@ -4,17 +4,15 @@ namespace TestProj.Core.Interfaces;
 
 public interface IProductRepository
 {
-    Task<List<Product>> GetAllProductsAsync();
+    Task<List<Product>> GetAllAsync();
 
-    Task<Product> GetProductByIdAsync(string id);
+    Task<Product> GetByIdAsync(string id);
 
-    Task AddProductAsync(Product product);
+    Task AddAsync(Product product);
 
-    Task UpdateProductAsync(string id, Product product);
+    Task UpdateAsync(string id, Product product);
 
-    Task DeleteProductAsync(string id);
+    Task DeleteAsync(string id);
 
-    Task<List<Product>> GetProductByIdsAsync(List<string> ids);
-
-    Task<string> SaveImgAsync(IFormFile img);
+    Task<List<Product>> GetByIdsAsync(List<string> ids);
 }

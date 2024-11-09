@@ -19,7 +19,6 @@ Log.Logger = new LoggerConfiguration()
 try
 {
     Log.Information("Starting up the application");
-
     builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
     builder.Services.AddControllers();
@@ -52,7 +51,6 @@ try
         });
     });
 
-
     builder.Host.UseSerilog();
 
     var app = builder.Build();
@@ -77,7 +75,6 @@ try
 
     app.UseAuthorization();
     app.MapControllers();
-
 
     app.Run();
 
