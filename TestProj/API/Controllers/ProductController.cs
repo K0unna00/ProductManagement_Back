@@ -35,10 +35,10 @@ public class ProductController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<Product>), 200)]
     public async Task<IActionResult> Get()
     {
-        _logger.LogInformation("Gets a list of all products.");
 
         var response = await _repository.GetAllAsync();
 
+        _logger.LogInformation("Gets a list of all products.");
         return Ok(new ApiResponse<IEnumerable<Product>>(response));
     }
 
@@ -62,7 +62,6 @@ public class ProductController : ControllerBase
         }
 
         _logger.LogInformation("Gets a product by its ID.");
-
         return Ok(new ApiResponse<Product>(product));
     }
 
@@ -81,10 +80,10 @@ public class ProductController : ControllerBase
         entity.ImgName = await _fileUtility.SaveImageAsync(productDto.Img);
         await _repository.AddAsync(entity);
 
-        _logger.LogInformation("Adds a new product to the system.");
 
         var response = CreatedAtAction(nameof(Get), new { id = entity.Id }, entity);
 
+        _logger.LogInformation("Adds a new product to the system.");
         return Ok(new ApiResponse<CreatedAtActionResult>(response));
     }
 
@@ -135,7 +134,6 @@ public class ProductController : ControllerBase
         var response = await _repository.GetByIdsAsync(ids);
 
         _logger.LogInformation(" Gets a products by IDs.");
-
         return Ok(new ApiResponse<IEnumerable<Product>>(response));
     }
 

@@ -30,3 +30,21 @@ public class ApiResponse<T>
         Data = data;
     }
 }
+
+public class ApiResponse
+{
+    public bool IsSuccess { get; set; }
+    public string ErrorMessage { get; set; }
+
+    public ApiResponse()
+    {
+        IsSuccess = true;
+    }
+
+    public ApiResponse(string errorMessage)
+    {
+        ErrorMessage = errorMessage;
+        IsSuccess = false;
+    }
+
+}

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
+using TestProj.Core.Common;
 using TestProj.Core.Exceptions;
 
 namespace TestProj.API.Middlewares;
@@ -51,10 +52,10 @@ public class ExceptionMiddleware
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
         }
 
-        var response = new
+        var response = new ApiResponse
         {
-            context.Response.StatusCode,
-            Message = errorMessage
+            ErrorMessage = errorMessage,
+            IsSuccess = false
         };
 
         _logger.LogInformation(errorMessage);
