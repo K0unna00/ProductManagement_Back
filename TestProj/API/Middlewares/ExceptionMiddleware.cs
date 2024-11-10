@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
+using TestProj.Core.Common;
 using TestProj.Core.Exceptions;
 
 namespace TestProj.API.Middlewares;
@@ -8,10 +9,12 @@ namespace TestProj.API.Middlewares;
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger _logger;
 
-    public ExceptionMiddleware(RequestDelegate next)
+    public ExceptionMiddleware(RequestDelegate next, ILogger logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
@@ -49,11 +52,13 @@ public class ExceptionMiddleware
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
         }
 
-        var response = new
+        var response = new ApiResponse
         {
-            StatusCode = context.Response.StatusCode,
-            Message = errorMessage
+            ErrorMessage = errorMessage,
+            IsSuccess = false
         };
+
+        _logger.LogInformation(errorMessage);
 
         var jsonResponse = JsonSerializer.Serialize(response);
         return context.Response.WriteAsync(jsonResponse);

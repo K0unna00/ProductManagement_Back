@@ -1,14 +1,11 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using TestProj.Core.Entities.Base;
 
 namespace TestProj.Core.Entities;
 
-public class Product
+public class Product : BaseEntity
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string? Id { get; set; }
-
     [BsonElement("name")]
     public string Name { get; set; }
 
@@ -18,6 +15,6 @@ public class Product
     [BsonElement("price")]
     public decimal Price { get; set; }
 
-    [BsonElement("createdAt")]
-    public DateTime CreatedAt { get; set; }
+    [BsonElement("imgName")]
+    public string ImgName { get; set; }
 }

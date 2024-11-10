@@ -1,21 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using TestProj.API.DTOs;
+using TestProj.Core.Common;
 using TestProj.Core.Entities;
 using TestProj.Core.Exceptions;
 using TestProj.Core.Interfaces;
+using TestProj.Core.Services;
+using TestProj.Infrastructure.Repositories;
+using TestProj.Infrastructure.Services;
 
 [Route("api/[controller]")]
 [ApiController]
 public class ProductController : ControllerBase
 {
     private readonly IProductRepository _repository;
-
     private readonly ILogger<ProductController> _logger;
+    private readonly IMapper _mapper;
+    private readonly IFileService _fileUtility;
+    private readonly IProductService _productService;
 
-    public ProductController(IProductRepository repository, ILogger<ProductController> logger)
+    public ProductController(IProductRepository repository, ILogger<ProductController> logger, IMapper mapper, IFileService fileUtility, IProductService productService)
     {
         _repository = repository;
         _logger = logger;
+        _mapper = mapper;
+        _fileUtility = fileUtility;
+        _productService = productService;
     }
 
     /// <summary>
@@ -27,8 +38,10 @@ public class ProductController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<Product>), 200)]
     public async Task<IActionResult> Get()
     {
+        var response = await _productService.GetAllProductsAsync();
+
         _logger.LogInformation("Gets a list of all products.");
-        return Ok(await _repository.GetAllProductsAsync());
+        return Ok(new ApiResponse<IEnumerable<ProductDto>>(response));
     }
 
     /// <summary>
@@ -43,7 +56,8 @@ public class ProductController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> Get(string id)
     {
-        var product = await _repository.GetProductByIdAsync(id);
+        var product = await _productService.GetProductByIdAsync(id);
+
         if (product == null)
         {
             _logger.LogInformation("Product not found");
@@ -51,7 +65,7 @@ public class ProductController : ControllerBase
         }
 
         _logger.LogInformation("Gets a product by its ID.");
-        return Ok(product);
+        return Ok(new ApiResponse<ProductDto>(product));
     }
 
     /// <summary>
@@ -62,12 +76,17 @@ public class ProductController : ControllerBase
     /// <response code="201">The product was successfully created</response>
     [HttpPost]
     [ProducesResponseType(typeof(Product), 201)]
-    public async Task<IActionResult> Post([FromBody] Product product)
+    public async Task<IActionResult> Post([FromForm] ProductDto productDto)
     {
-        await _repository.AddProductAsync(product);
+        var entity = _mapper.Map<Product>(productDto);
+
+        entity.ImgName = await _fileUtility.SaveImageAsync(productDto.Image);
+        await _repository.AddAsync(entity);
+
+        var response = CreatedAtAction(nameof(Get), new { id = entity.Id }, entity);
 
         _logger.LogInformation("Adds a new product to the system.");
-        return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
+        return Ok(new ApiResponse<CreatedAtActionResult>(response));
     }
 
     /// <summary>
@@ -81,12 +100,15 @@ public class ProductController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> Put(string id, [FromBody] Product product)
+    public async Task<IActionResult> Put(string id, [FromForm] ProductDto productDto)
     {
-        await _repository.UpdateProductAsync(id, product);
+        var entity = _mapper.Map<Product>(productDto);
+
+        entity.ImgName = await _fileUtility.SaveImageAsync(productDto.Image);
+        await _repository.UpdateAsync(id, entity);
 
         _logger.LogInformation("Updates an existing product.");
-        return NoContent();
+        return Ok(new ApiResponse<IActionResult>());
     }
 
     /// <summary>
@@ -99,10 +121,10 @@ public class ProductController : ControllerBase
     [ProducesResponseType(204)]
     public async Task<IActionResult> Delete(string id)
     {
-        await _repository.DeleteProductAsync(id);
+        await _repository.DeleteAsync(id);
 
         _logger.LogInformation("Deletes a product by its ID.");
-        return NoContent();
+        return Ok(new ApiResponse<IActionResult>());
     }
 
     /// <summary>
@@ -114,10 +136,10 @@ public class ProductController : ControllerBase
     [HttpPost("getByIds")]
     public async Task<IActionResult> GetProductsByIds([FromBody] List<string> ids)
     {
-        var products = await _repository.GetProductByIdsAsync(ids);
+        var response = await _repository.GetByIdsAsync(ids);
 
         _logger.LogInformation(" Gets a products by IDs.");
-        return Ok(products);
+        return Ok(new ApiResponse<IEnumerable<Product>>(response));
     }
 
 
