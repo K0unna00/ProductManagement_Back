@@ -1,4 +1,6 @@
-﻿using TestProj.Core.Services;
+﻿using Microsoft.Extensions.Options;
+using TestProj.Core.Services;
+using TestProj.Infrastructure.Data;
 
 namespace TestProj.Infrastructure.Services;
 
@@ -6,9 +8,9 @@ public class FileService : IFileService
 {
     private readonly string _imageFolder;
 
-    public FileService(IConfiguration configuration)
+    public FileService(IOptions<FileSettings> settings)
     {
-        _imageFolder = configuration["FileSettings:FileFolderPath"];
+        _imageFolder = settings.Value.FileFolderPath;
 
         if (!Directory.Exists(_imageFolder))
         {

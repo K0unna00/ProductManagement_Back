@@ -1,4 +1,5 @@
 ﻿using TestProj.API.DTOs;
+using TestProj.Core.Exceptions;
 using TestProj.Core.Interfaces;
 using TestProj.Core.Services;
 
@@ -30,7 +31,8 @@ public class ProductService : IProductService
 
     public async Task<ProductDto> GetProductByIdAsync(string id)
     {
-        var product = await _repository.GetByIdAsync(id);
+        var product = await _repository.GetByIdAsync(id) ?? throw new ProductNotFoundException();
+
         return new ProductDto
         {
             Id = product.Id,

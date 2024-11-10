@@ -14,8 +14,6 @@ try
 {
     Log.Information("Starting up the application");
 
-    builder.Services.Configure<DBSettings>(builder.Configuration.GetSection("DBSettings"));
-
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("CORS", policy =>
@@ -26,7 +24,7 @@ try
         });
     });
 
-    builder.Services.ConfigureServices();
+    builder.Services.ConfigureServices(builder.Configuration);
 
     builder.Host.UseSerilog();
 
@@ -41,7 +39,6 @@ try
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestProj API v1");
         });
     }
-
 
     app.UseStaticFiles();
     app.UseHttpsRedirection();

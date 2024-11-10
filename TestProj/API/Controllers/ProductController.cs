@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 using TestProj.API.DTOs;
 using TestProj.Core.Common;
 using TestProj.Core.Entities;
 using TestProj.Core.Exceptions;
 using TestProj.Core.Interfaces;
 using TestProj.Core.Services;
-using TestProj.Infrastructure.Repositories;
-using TestProj.Infrastructure.Services;
+
 
 [Route("api/[controller]")]
 [ApiController]
@@ -20,7 +18,8 @@ public class ProductController : ControllerBase
     private readonly IFileService _fileUtility;
     private readonly IProductService _productService;
 
-    public ProductController(IProductRepository repository, ILogger<ProductController> logger, IMapper mapper, IFileService fileUtility, IProductService productService)
+    public ProductController(IProductRepository repository, ILogger<ProductController> logger, IMapper mapper,
+        IFileService fileUtility, IProductService productService)
     {
         _repository = repository;
         _logger = logger;
@@ -81,12 +80,14 @@ public class ProductController : ControllerBase
         var entity = _mapper.Map<Product>(productDto);
 
         entity.ImgName = await _fileUtility.SaveImageAsync(productDto.Image);
+
         await _repository.AddAsync(entity);
 
         var response = CreatedAtAction(nameof(Get), new { id = entity.Id }, entity);
 
         _logger.LogInformation("Adds a new product to the system.");
         return Ok(new ApiResponse<CreatedAtActionResult>(response));
+
     }
 
     /// <summary>

@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Serilog;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
 using TestProj.Core.Common;
+using TestProj.Core.Entities;
 using TestProj.Core.Exceptions;
 
 namespace TestProj.API.Middlewares;
@@ -9,9 +11,9 @@ namespace TestProj.API.Middlewares;
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger _logger;
+    private readonly ILogger<ProductController> _logger;
 
-    public ExceptionMiddleware(RequestDelegate next, ILogger logger)
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ProductController> logger)
     {
         _next = next;
         _logger = logger;
@@ -58,7 +60,7 @@ public class ExceptionMiddleware
             IsSuccess = false
         };
 
-        _logger.LogInformation(errorMessage);
+        Log.Logger.Information(errorMessage);
 
         var jsonResponse = JsonSerializer.Serialize(response);
         return context.Response.WriteAsync(jsonResponse);

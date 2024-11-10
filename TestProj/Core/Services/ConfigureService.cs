@@ -1,6 +1,9 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 using TestProj.Core.Interfaces;
+using TestProj.Core.Validations;
 using TestProj.Infrastructure.Data;
 using TestProj.Infrastructure.Repositories;
 using TestProj.Infrastructure.Services;
@@ -17,8 +20,7 @@ public static class ConfigureService
 
     private static string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
-
-    public static void ConfigureServices(this IServiceCollection services)
+    public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
     {
         var serviceProvider = services.BuildServiceProvider();
         var logger = serviceProvider.GetService<ILogger<ApplicationLog>>();
@@ -36,7 +38,14 @@ public static class ConfigureService
             options.IncludeXmlComments(xmlPath);
         });
 
+
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        services.AddValidatorsFromAssemblyContaining<ProductValidator>();
+        services.AddFluentValidation();
+
+        services.Configure<DBSettings>(configuration.GetSection("DBSettings"));
+        services.Configure<FileSettings>(configuration.GetSection("FileSettings"));
 
         #region Registration
 
