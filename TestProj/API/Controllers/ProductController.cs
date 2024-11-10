@@ -104,7 +104,7 @@ public class ProductController : ControllerBase
         await _repository.UpdateAsync(id, product);
 
         _logger.LogInformation("Updates an existing product.");
-        return NoContent();
+        return Ok(new ApiResponse<IActionResult>());
     }
 
     /// <summary>
@@ -120,7 +120,7 @@ public class ProductController : ControllerBase
         await _repository.DeleteAsync(id);
 
         _logger.LogInformation("Deletes a product by its ID.");
-        return NoContent();
+        return Ok(new ApiResponse<IActionResult>());
     }
 
     /// <summary>
@@ -132,10 +132,11 @@ public class ProductController : ControllerBase
     [HttpPost("getByIds")]
     public async Task<IActionResult> GetProductsByIds([FromBody] List<string> ids)
     {
-        var products = await _repository.GetByIdsAsync(ids);
+        var response = await _repository.GetByIdsAsync(ids);
 
         _logger.LogInformation(" Gets a products by IDs.");
-        return Ok(products);
+
+        return Ok(new ApiResponse<IEnumerable<Product>>(response));
     }
 
 

@@ -6,6 +6,11 @@ public class ApiResponse<T>
     public bool IsSuccess { get; set; }
     public string ErrorMessage { get; set; }
 
+    public ApiResponse()
+    {
+        IsSuccess = true;
+    }
+
     public ApiResponse(T data)
     {
         Data = data;
