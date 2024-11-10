@@ -8,6 +8,7 @@ using TestProj.Core.Exceptions;
 using TestProj.Core.Interfaces;
 using TestProj.Core.Services;
 using TestProj.Infrastructure.Repositories;
+using TestProj.Infrastructure.Services;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -17,13 +18,15 @@ public class ProductController : ControllerBase
     private readonly ILogger<ProductController> _logger;
     private readonly IMapper _mapper;
     private readonly IFileService _fileUtility;
+    private readonly IProductService _productService;
 
-    public ProductController(IProductRepository repository, ILogger<ProductController> logger, IMapper mapper, IFileService fileUtility)
+    public ProductController(IProductRepository repository, ILogger<ProductController> logger, IMapper mapper, IFileService fileUtility, IProductService productService)
     {
         _repository = repository;
         _logger = logger;
         _mapper = mapper;
         _fileUtility = fileUtility;
+        _productService = productService;
     }
 
     /// <summary>
@@ -35,11 +38,10 @@ public class ProductController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<Product>), 200)]
     public async Task<IActionResult> Get()
     {
-
-        var response = await _repository.GetAllAsync();
+        var response = await _productService.GetAllProductsAsync();
 
         _logger.LogInformation("Gets a list of all products.");
-        return Ok(new ApiResponse<IEnumerable<Product>>(response));
+        return Ok(new ApiResponse<IEnumerable<ProductDto>>(response));
     }
 
     /// <summary>
@@ -54,7 +56,8 @@ public class ProductController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> Get(string id)
     {
-        var product = await _repository.GetByIdAsync(id);
+        var product = await _productService.GetProductByIdAsync(id);
+
         if (product == null)
         {
             _logger.LogInformation("Product not found");
@@ -62,7 +65,7 @@ public class ProductController : ControllerBase
         }
 
         _logger.LogInformation("Gets a product by its ID.");
-        return Ok(new ApiResponse<Product>(product));
+        return Ok(new ApiResponse<ProductDto>(product));
     }
 
     /// <summary>
@@ -77,9 +80,8 @@ public class ProductController : ControllerBase
     {
         var entity = _mapper.Map<Product>(productDto);
 
-        entity.ImgName = await _fileUtility.SaveImageAsync(productDto.Img);
+        entity.ImgName = await _fileUtility.SaveImageAsync(productDto.Image);
         await _repository.AddAsync(entity);
-
 
         var response = CreatedAtAction(nameof(Get), new { id = entity.Id }, entity);
 
@@ -98,9 +100,12 @@ public class ProductController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> Put(string id, [FromBody] Product product)
+    public async Task<IActionResult> Put(string id, [FromForm] ProductDto productDto)
     {
-        await _repository.UpdateAsync(id, product);
+        var entity = _mapper.Map<Product>(productDto);
+
+        entity.ImgName = await _fileUtility.SaveImageAsync(productDto.Image);
+        await _repository.UpdateAsync(id, entity);
 
         _logger.LogInformation("Updates an existing product.");
         return Ok(new ApiResponse<IActionResult>());

@@ -45,6 +45,8 @@ public static class ConfigureService
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IFileService, FileService>();
 
+        services.AddScoped<IProductService, ProductService>();
+
         #endregion
     }
 }

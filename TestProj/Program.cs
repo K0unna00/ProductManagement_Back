@@ -1,12 +1,7 @@
-using Microsoft.OpenApi.Models;
 using Serilog;
-using System.Reflection;
 using TestProj.API.Middlewares;
-using TestProj.Core.Interfaces;
 using TestProj.Core.Services;
 using TestProj.Infrastructure.Data;
-using TestProj.Infrastructure.Repositories;
-using TestProj.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -13,5 +13,7 @@ public class ProductDto
 
     public decimal Price { get; set; }
 
-    public IFormFile Img { get; set; }
+    public IFormFile Image { get; set; }
+
+    public string? ImgBase64 { get; set; }
 }
