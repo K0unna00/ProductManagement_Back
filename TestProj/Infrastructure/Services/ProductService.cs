@@ -66,7 +66,7 @@ public class ProductService : IProductService
         {
             entity.ImgName = await _fileService.SaveImageAsync(productDto.Image);
         }
-        else if (entity.ImgName is not null)
+        else
         {
             throw new FileNotFoundException();
         }
@@ -78,13 +78,16 @@ public class ProductService : IProductService
     {
         var entity = _mapper.Map<Product>(productDto);
 
-        if (productDto.Image is not null)
-        {
-            entity.ImgName = await _fileService.SaveImageAsync(productDto.Image);
-        }
-        else if (entity.ImgName is null)
+        if (entity.ImgName is null)
         {
             throw new FileNotFoundException();
+        }
+        else if(productDto.Image is not null)
+        {
+            await _fileService.DeleteImageAsync(entity.ImgName);
+
+            entity.ImgName = await _fileService.SaveImageAsync(productDto.Image);
+
         }
 
         await _repository.UpdateAsync(id, entity);
