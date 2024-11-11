@@ -2,7 +2,7 @@
 
 public class ProductNotFoundException : Exception
 {
-    public ProductNotFoundException() : base($"Product was not found.")
+    public ProductNotFoundException(string message = "Product was not found.") : base(message)
     {
     }
 }

@@ -15,5 +15,5 @@ public class ProductDto
 
     public IFormFile Image { get; set; }
 
-    public string? ImgBase64 { get; set; }
+    public string? ImgPath { get; set; }
 }

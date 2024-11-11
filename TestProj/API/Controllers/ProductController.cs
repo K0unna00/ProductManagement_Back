@@ -34,7 +34,7 @@ public class ProductController : ControllerBase
     /// <returns>A list of products</returns>
     /// <response code="200">Returns the list of products</response>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<Product>), 200)]
+    [ProducesResponseType(typeof(IEnumerable<ProductDto>), 200)]
     public async Task<IActionResult> Get()
     {
         var response = await _productService.GetAllProductsAsync();
@@ -122,7 +122,7 @@ public class ProductController : ControllerBase
     [ProducesResponseType(204)]
     public async Task<IActionResult> Delete(string id)
     {
-        await _repository.DeleteAsync(id);
+        await _productService.DeleteProductAsync(id);
 
         _logger.LogInformation("Deletes a product by its ID.");
         return Ok(new ApiResponse<IActionResult>());

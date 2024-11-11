@@ -40,10 +40,23 @@ public class FileService : IFileService
         var imagePath = Path.Combine("wwwroot/images", imageName);
         if (!File.Exists(imagePath))
         {
-            return null;
+            throw new FileNotFoundException();
         }
 
         var imageBytes = File.ReadAllBytes(imagePath);
         return Convert.ToBase64String(imageBytes);
+    }
+
+    public Task DeleteImageAsync(string imageName)
+    {
+        var imagePath = Path.Combine("wwwroot/images", imageName);
+        if (File.Exists(imagePath))
+        {
+            File.Delete(imagePath);
+
+            return Task.CompletedTask;
+        }
+
+        throw new FileNotFoundException();
     }
 }

@@ -25,7 +25,7 @@ public class ProductService : IProductService
             Name = product.Name,
             Description = product.Description,
             Price = product.Price,
-            ImgBase64 = _fileService.ConvertImageToBase64(product.ImgName)
+            ImgPath = product.ImgName
         });
     }
 
@@ -39,7 +39,18 @@ public class ProductService : IProductService
             Name = product.Name,
             Description = product.Description,
             Price = product.Price,
-            ImgBase64 = _fileService.ConvertImageToBase64(product.ImgName)
+            ImgPath = product.ImgName
         };
     }
+
+    public async Task DeleteProductAsync(string id)
+    {
+        var product = await _repository.GetByIdAsync(id) ?? throw new ProductNotFoundException();
+
+        await _fileService.DeleteImageAsync(product.ImgName);
+
+        await _repository.DeleteAsync(id);
+
+    }
+
 }
