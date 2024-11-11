@@ -16,6 +16,5 @@ public class ProductValidator : AbstractValidator<ProductDto>
         RuleFor(p => p.Description).NotEmpty().WithMessage("Boş ola bilməz").
             Length(3, 40).WithMessage("3 və 40 simvol aralığında olmalıdır");
 
-        RuleFor(p => p.Image).NotNull().WithMessage("Boş ola bilməz");
     }
 }

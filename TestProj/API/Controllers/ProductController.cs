@@ -77,13 +77,9 @@ public class ProductController : ControllerBase
     [ProducesResponseType(typeof(Product), 201)]
     public async Task<IActionResult> Post([FromForm] ProductDto productDto)
     {
-        var entity = _mapper.Map<Product>(productDto);
+        await _productService.CreateProduct(productDto);
 
-        entity.ImgName = await _fileUtility.SaveImageAsync(productDto.Image);
-
-        await _repository.AddAsync(entity);
-
-        var response = CreatedAtAction(nameof(Get), new { id = entity.Id }, entity);
+        var response = CreatedAtAction(nameof(Get), new { id = productDto.Id }, productDto);
 
         _logger.LogInformation("Adds a new product to the system.");
         return Ok(new ApiResponse<CreatedAtActionResult>(response));
@@ -103,10 +99,7 @@ public class ProductController : ControllerBase
     [ProducesResponseType(400)]
     public async Task<IActionResult> Put(string id, [FromForm] ProductDto productDto)
     {
-        var entity = _mapper.Map<Product>(productDto);
-
-        entity.ImgName = await _fileUtility.SaveImageAsync(productDto.Image);
-        await _repository.UpdateAsync(id, entity);
+        await _productService.UpdateProduct(id, productDto);
 
         _logger.LogInformation("Updates an existing product.");
         return Ok(new ApiResponse<IActionResult>());
